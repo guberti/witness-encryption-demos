@@ -8,8 +8,11 @@ class ExactCoverProblem:
 
         # Validate subsets
         for subset in subsets:
+            assert len(subset) > 0
+            assert len(subset) < n
             assert min(subset) >= 0
             assert max(subset) < n
+
         self.subsets = subsets
 
     def check_witness(self, indices: List[int]):
