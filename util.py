@@ -1,7 +1,7 @@
 from typing import List
 
 class ExactCoverProblem:
-    def __init__(n: int, *subsets: List[int]):
+    def __init__(self, n: int, *subsets: List[int]):
         # Validate n
         assert n >= 0
         self.n = n
@@ -12,7 +12,7 @@ class ExactCoverProblem:
             assert max(subset) < n
         self.subsets = subsets
 
-    def check_witness(indices: List[int]):
+    def check_witness(self, indices: List[int]):
         union = set()
         size = 0
         for i in indices:
