@@ -1,4 +1,5 @@
 import secrets
+import random
 from Crypto.Util import number
 import util
 from functools import reduce
@@ -7,25 +8,34 @@ from mmap import MMap, Element
 from typing import List
 
 class BitEncryptor:
-    P = 1009 # TODO is this prime large enough?
+    # P = 1009 # TODO is this prime large enough?
 
     def __init__(self, problem: util.ExactCoverProblem):
         self.problem = problem
-        self.map = MMap(problem.n, BitEncryptor.P)
+        self.P = number.getPrime(problem.n)
+        self.map = MMap(problem.n, self.P)
+        
+    def bad_rng(self):
+        a = secrets.randbits(self.problem.n)
+        while a > self.P or a <= 0:
+            a = secrets.randbits(self.problem.n)
+        return a
 
     def encrypt(self, b: bool):
         # generator = secrets.SystemRandom()
         # Group Z*_p with 1...(P-1)
-        group = range(1, BitEncryptor.P)
 
-        a = [secrets.choice(group) for _ in range(self.problem.n)]
+        # secrets.choice cannot handle a large range, 
+        # so we will use random.randint until a better alternative is found.
+        # a = [secrets.choice(group) for _ in range(self.problem.n)]
+        a = [self.bad_rng() for _ in range(self.problem.n)]
         ct = []
 
         g = self.map.get_generator(self.problem.n)
         if b:
             ct.append(g ** reduce(mul, a, 1))
         else:
-            ct.append(g ** secrets.choice(group))
+            ct.append(g ** self.bad_rng())
 
         for subset in self.problem.subsets:
             g = self.map.get_generator(len(subset))
