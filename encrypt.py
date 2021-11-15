@@ -4,7 +4,7 @@ from Crypto.Util import number
 import util
 from functools import reduce
 from operator import mul
-from mmap import MMap, Element
+from mmap_classes import MMap, Element
 from typing import List
 
 class BitEncryptor:

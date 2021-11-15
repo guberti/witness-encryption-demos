@@ -1,4 +1,4 @@
-from mmap import MMap, Group, Element
+from mmap_classes import MMap, Group, Element
 from sudoku_encryption import SudokuEncryption
 from sudoku_reduction import SudokuReduction
 from util import SIMPLE_EC_PROBLEM, SIMPLE_EC_PROBLEM_SOL
@@ -105,7 +105,7 @@ def main():
     element_test()
     mmap_test()
     encryption_tests()
-    # sudoku_reduction_constraints()
+    sudoku_reduction_constraints()
     sudoku_reduction()
 
     print("(.づ◡﹏◡)づ. Everything Passed!!!!! sugoi desu-ne~ (.づ◡﹏◡)づ.")

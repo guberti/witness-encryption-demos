@@ -62,8 +62,8 @@ class SudokuReduction:
 
         def str_constraints(r, c, v):
             rownum = self.n**2*r + self.n*c + v
-            row = '|' + ' '.join(map(clean, [(self.collection)[rownum][i] for i in range(self.n**2)])) + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+1*offset] for i in range(self.n**2)])) + '|' + ' '.join(
-                map(clean, [(self.collection)[rownum][i+2*offset] for i in range(self.n**2)])) + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+3*offset] for i in range(self.n**2)])) + '|'
+            row = '|' + '|'.join([' '.join(map(clean, [(self.collection)[rownum][i+k*offset] for i in range(self.n**2)])) for k in range(4)]) + '|' 
+            # + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+1*offset] for i in range(self.n**2)])) + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+2*offset] for i in range(self.n**2)])) + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+3*offset] for i in range(self.n**2)])) + '|'
             return row
 
         header = str_coords("r", "c", "v") + "|" + "cell".ljust(2*offset-1, " ") + "|" + "row".ljust(
