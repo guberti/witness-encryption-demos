@@ -48,16 +48,6 @@ class SudokuEncryption:
 
     @staticmethod
     def static_decrypt(ct, solution, mmap):
-        # # check that we've setup encryption
-        # assert isinstance(self.bit_enc, BitEncryptor)
-        # assert len(solution) == len(self.puzzle)
-        # assert len(solution[0]) == len(self.puzzle[0])
-        # # check that puzzle is a subset of solution
-        # for i, j in itertools.product(range(len(solution)), range(len(solution))):
-        #     if self.puzzle[i][j] is not None:
-        #         assert solution[i][j] == self.puzzle[i][j]
-        
-        # now convert to set indices
         indices = []
         n = len(solution)
         for i in range(n):

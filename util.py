@@ -9,7 +9,7 @@ class ExactCoverProblem:
         # Validate subsets
         for subset in subsets:
             # assert len(subset) > 0
-            assert len(subset) < n, f"Your shitty subset: {subset}"
+            assert len(subset) < n, f"Your subset: {subset}"
             assert len(subset) == 0 or min(subset) >= 0
             assert len(subset) == 0 or max(subset) < n
 
