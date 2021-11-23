@@ -18,11 +18,12 @@ class SudokuReduction:
         # None indicates no value in cell
         self.puzzle = puzzle
         self.n = len(puzzle)
+        self.b = int(self.n ** 0.5)
         self.collection = [[0] for _ in range(self.n ** 3)]
         self.gen_sets()
+        self.trim_sets()
 
     def gen_sets(self):
-
         for row, col, val in itertools.product(range(self.n), range(self.n), range(self.n)):
             offset = self.n ** 2
             # create the row for this thing
@@ -39,6 +40,35 @@ class SudokuReduction:
                    0.5 + (col // self.n ** 0.5)) * self.n + val)] = 1
 
             self.collection[row * self.n ** 2 + col * self.n + val] = st
+
+    def trim_sets(self):
+        # set those that are invalid (meaning they have a 1 in the same column that a fixed
+        # number has a 1) to be empty
+        # this means to cover the entry in those spots, they must use the fixed number
+        bad_indices = set()
+        for row in range(self.n):
+            for col in range(self.n):
+                if self.puzzle[row][col] is None:
+                    continue
+                # set every set that shares a 1 in any column with this one to be empty
+                # deal with first set, so zero out every other row corresponding to a number in this cell
+                # means every block with the same row col values
+                bad_indices.update(set(map(lambda v: self.to_index(row, col, v), range(self.n))))
+                # second set, same value and same row
+                bad_indices.update(set(map(lambda c: self.to_index(row, c, self.puzzle[row][col]), range(self.n))))
+                # third set, same value and same column
+                bad_indices.update(set(map(lambda r: self.to_index(r, col, self.puzzle[row][col]), range(self.n))))
+                # last set, same block
+                bad_indices.update(set(map(lambda x: self.to_index((row // self.b) * self.b + x % self.b, (col // self.b) * self.b + x // self.b, self.puzzle[row][col]), range(self.n))))
+                # add back the correct set itself
+                bad_indices.remove(row * self.n ** 2 + col * self.n + self.puzzle[row][col])
+        print(bad_indices)
+        # now set all bad_indices to be empty lists
+        for i in bad_indices:
+            self.collection[i] = [0 for _ in range(4 * self.n ** 2)]
+
+    def to_index(self, row, col, val):
+        return int(row * self.n ** 2 + col * self.n + val)
 
     def to_exact_cover(self):
         def bin_to_numeric(ls):
@@ -63,7 +93,6 @@ class SudokuReduction:
         def str_constraints(r, c, v):
             rownum = self.n**2*r + self.n*c + v
             row = '|' + '|'.join([' '.join(map(clean, [(self.collection)[rownum][i+k*offset] for i in range(self.n**2)])) for k in range(4)]) + '|' 
-            # + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+1*offset] for i in range(self.n**2)])) + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+2*offset] for i in range(self.n**2)])) + '|' + ' '.join(map(clean, [(self.collection)[rownum][i+3*offset] for i in range(self.n**2)])) + '|'
             return row
 
         header = str_coords("r", "c", "v") + "|" + "cell".ljust(2*offset-1, " ") + "|" + "row".ljust(

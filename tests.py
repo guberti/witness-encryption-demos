@@ -1,4 +1,5 @@
 from mmap_classes import MMap, Group, Element
+from Crypto.Util import number
 from sudoku_encryption import SudokuEncryption
 from sudoku_reduction import SudokuReduction
 from util import SIMPLE_EC_PROBLEM, SIMPLE_EC_PROBLEM_SOL
@@ -51,30 +52,35 @@ def mmap_test():
 
 
 def encryption_tests():
+    # P = number.getPrime(SIMPLE_EC_PROBLEM.n)
+    # t_MMap = MMap(SIMPLE_EC_PROBLEM.n, P)
     enc = encrypt.BitEncryptor(SIMPLE_EC_PROBLEM)
+    (_, t_MMap) = enc.print_keys()
 
     ct = enc.encrypt(1)
-    # print(list(map(str, ct)))
-    assert enc.decrypt(ct, SIMPLE_EC_PROBLEM_SOL) == 1, "encrypting 1"
+    print(list(map(str, ct)))
+    assert encrypt.BitEncryptor.static_decrypt(ct, SIMPLE_EC_PROBLEM_SOL, t_MMap) == 1, "encrypting 1"
 
     ct = enc.encrypt(0)
-    assert enc.decrypt(ct, SIMPLE_EC_PROBLEM_SOL) == 0, "encrypting 0"
+    assert encrypt.BitEncryptor.static_decrypt(ct, SIMPLE_EC_PROBLEM_SOL, t_MMap) == 0, "encrypting 0"
 
 
 def sudoku_reduction_constraints():
-    n = 4
-    puzzle = [[0 for _ in range(4)] for _ in range(4)]
-    reduced = SudokuReduction(puzzle)
-    reduced.gen_sets()
-    print(reduced)
-
-
-def sudoku_reduction():
     n = 4
     puzzle = [[None, None, None, 2],
               [None, 0, None, 3],
               [0, None, None, None],
               [1, None, 3, None]]
+    reduced = SudokuReduction(puzzle)
+    print(reduced)
+
+
+def sudoku_reduction():
+    n = 4
+    puzzle = [[None,    None,   None,   2],
+              [None,    0,      None,   3],
+              [0,       None,   None,   None],
+              [1,       None,   3,      None]]
 
     witness_mat_correct = [
         [3, 1, 0, 2],
@@ -91,13 +97,14 @@ def sudoku_reduction():
     ] 
 
     enc = SudokuEncryption(puzzle)
-    ct = enc.encrypt(1)
-    assert enc.decrypt(ct, witness_mat_correct) == 1, "encrypting 1"
+    p, mmap, ct = enc.encrypt(1)
+    assert SudokuEncryption.static_decrypt(ct, witness_mat_correct, mmap) == 1, "encrypting 1"
     try:
-        assert enc.decrypt(ct, witness_mat_incorrect) == 1, "encrypting 1"
+        assert SudokuEncryption.static_decrypt(ct, witness_mat_incorrect, mmap) == 1, "encrypting 1"
         raise NameError("incorrect solution should always decrypt to 0")
     except AssertionError:
         pass
+
 
 
 def main():

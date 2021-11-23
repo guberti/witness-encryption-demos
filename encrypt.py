@@ -12,8 +12,11 @@ class BitEncryptor:
 
     def __init__(self, problem: util.ExactCoverProblem):
         self.problem = problem
-        self.P = number.getPrime(problem.n)
-        self.map = MMap(problem.n, self.P)
+        self.P = number.getPrime(self.problem.n)
+        self.map = MMap(self.problem.n, self.P)
+
+    def print_keys(self):
+        return (self.P, self.map)
         
     def bad_rng(self):
         a = secrets.randbits(self.problem.n)
@@ -43,8 +46,14 @@ class BitEncryptor:
             
         return ct
 
+    # testing convenience
     def decrypt(self, ciphertext: List[Element], solution: List[int]):
         assert len(solution) > 0, "this isn't a solution"
         s = reduce(self.map.bilinear_map, [ciphertext[i + 1] for i in solution])
         return s == ciphertext[0]
 
+    @staticmethod
+    def static_decrypt(ciphertext: List[Element], solution: List[int], map: MMap):
+        assert len(solution) > 0, "this isn't a solution"
+        s = reduce(map.bilinear_map, [ciphertext[i + 1] for i in solution])
+        return s == ciphertext[0]
