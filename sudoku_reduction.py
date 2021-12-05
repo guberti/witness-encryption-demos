@@ -62,7 +62,7 @@ class SudokuReduction:
                 bad_indices.update(set(map(lambda x: self.to_index((row // self.b) * self.b + x % self.b, (col // self.b) * self.b + x // self.b, self.puzzle[row][col]), range(self.n))))
                 # add back the correct set itself
                 bad_indices.remove(row * self.n ** 2 + col * self.n + self.puzzle[row][col])
-        print(bad_indices)
+        # print(bad_indices)
         # now set all bad_indices to be empty lists
         for i in bad_indices:
             self.collection[i] = [0 for _ in range(4 * self.n ** 2)]
@@ -75,6 +75,12 @@ class SudokuReduction:
             return [i for i, b in enumerate(ls) if b]
         subsets = list(map(bin_to_numeric, self.collection))
         return ExactCoverProblem(4 * self.n ** 2, *subsets)
+
+    def to_exact_cover_sets(self):
+        def bin_to_numeric(ls):
+            return [i for i, b in enumerate(ls) if b]
+        subsets = list(map(bin_to_numeric, self.collection))
+        return subsets
 
     def __str__(self):
         ml = len(str(self.n))*3+6
