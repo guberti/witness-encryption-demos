@@ -22,9 +22,15 @@ def sudoku(input):
         n = int(infile.readline())
         puzzle = [list(map(mapchar, infile.readline().strip('\n'))) for _ in range(n)]
         reduction = SudokuReduction(puzzle)
-        sets = list(filter(lambda x: len(x)>0, reduction.to_exact_cover_sets()))
+        sets_unfiltered, elems_to_cover = reduction.to_exact_cover_sets()
+        sets = list(filter(lambda x: len(x)>0, sets_unfiltered))
         
+        # output textfile is formatted as follow:
+        #   first row is a single number n, denoting an n element exact cover
+        #   second row is a single number S, denoting the number of sets 
+        #   subsequent rows are space-separated integers, each row denoting the elements of a set
         with open (f"output_puzzles/sets_{input}", 'w') as outfile:
+            outfile.write(f"{elems_to_cover}\n{len(sets)}\n")
             for set in sets:
                 outfile.write(f'{" ".join(map(str, set))}\n')
 
@@ -35,7 +41,7 @@ def pentomino(input):
     #   the next n rows consist of n consecutive rows in the set {'.', '#'}. 
     #       '.' denotes that the cell is blank
     #       '#' denotes that the cell is blocked
-    
+    pass
 
 
 

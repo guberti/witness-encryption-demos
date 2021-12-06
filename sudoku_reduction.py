@@ -80,7 +80,7 @@ class SudokuReduction:
         def bin_to_numeric(ls):
             return [i for i, b in enumerate(ls) if b]
         subsets = list(map(bin_to_numeric, self.collection))
-        return subsets
+        return subsets, 4 * self.n ** 2
 
     def __str__(self):
         ml = len(str(self.n))*3+6
