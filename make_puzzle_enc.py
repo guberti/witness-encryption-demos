@@ -36,6 +36,41 @@ def sudoku(input):
                 outfile.write(f'{" ".join(map(str, set))}\n')
 
 
+def sudoku_wsol(input):
+    def mapchar(c):
+        if c == '.':
+            return None
+        else:
+            return int(c)-1
+    
+    with open(f"input_puzzles/{input}") as infile:
+        n = int(infile.readline())
+        puzzle = [list(map(mapchar, infile.readline().strip('\n'))) for _ in range(n)]
+        reduction = SudokuReduction(puzzle)
+        sets_unfiltered, elems_to_cover = reduction.to_exact_cover_sets()
+        sets = list(filter(lambda x: len(x)>0, sets_unfiltered))
+        
+        with open (f"output_puzzles/sets_{input}", 'w') as outfile:
+            outfile.write(f"{elems_to_cover}\n{len(sets)}\n")
+            for set in sets:
+                outfile.write(f'{" ".join(map(str, set))}\n')
+        
+        puzzle_sol = [list(map(mapchar, infile.readline().strip('\n'))) for _ in range(n)]
+        reduction_sol = SudokuReduction(puzzle_sol)
+        sets_unfiltered_sol, elems_to_cover_sol = reduction_sol.to_exact_cover_sets()
+        sets_sol = list(filter(lambda x: len(x)>0, sets_unfiltered_sol))
+        indices = []
+        idx = 0
+        while len(sets_sol) > 0:
+            if sets_sol[0] == sets[idx]:
+                indices.append(idx)
+                sets_sol.pop(0)
+            idx+=1
+        with open (f"output_puzzles/sets_{input}", 'a') as outfile:
+            outfile.write(" ".join(map(str, indices)))
+
+
+
 def pentomino(input):
     # input textfile is formatted as follow:
     #   first row is a single number n  describing the number of rows in the grid
@@ -78,6 +113,8 @@ def main():
     
     if puzzle_class == 'sudoku':
         sudoku(filename) 
+    elif puzzle_class == 'sudokuwsol':
+        sudoku_wsol(filename)
     elif puzzle_class == 'pento':
         pentomino(filename)
 
