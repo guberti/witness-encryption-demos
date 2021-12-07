@@ -60,7 +60,7 @@ def pentomino(input):
             for set in sets:
                 outfile.write(f'{" ".join(map(str, set))}\n')
 
-        reduction.dump()
+        # reduction.dump()
 
         
 
