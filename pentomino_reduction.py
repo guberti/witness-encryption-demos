@@ -1,5 +1,6 @@
 import itertools
 import math
+from copy import deepcopy 
 from util import ExactCoverProblem
 
 
@@ -67,19 +68,20 @@ class PentominoReduction:
         self.n = len(puzzle)
         self.m = len(puzzle[0])
         self.pieces = pieces
-        self.piece_count = len(pieces)
+        self.piece_count = sum(pieces)
         self.cart_to_lbl = None
         self.lbl_to_cart = None
-        self.tile_bitmasks = PentominoBitmasks()
+        self.tile_bitmasks = PentominoBitmasks().bitmask_list
         self.setcoverrowlen = 0
         # we label the cells from top to bottom, left to right to compress representation. 
         # this requires a mapping from cell coordinates to index
-        self.create_cell_map()
+        self.init_cart_to_lbl()
 
         self.collection = []
+        self.gen_sets()
 
 
-    def create_cell_map(self):
+    def init_cart_to_lbl(self):
         counter = 0
         cart_to_lbl = dict()
         lbl_to_cart = dict()
@@ -106,14 +108,15 @@ class PentominoReduction:
 
     def gen_sets_for_piece(self, pc_id):
         sets = []
-
+        # print(f"piece {pc_id}")
+        # print(self.tile_bitmasks[pc_id])
         for mask in self.tile_bitmasks[pc_id]:
             maskn = len(mask)
             maskm = len(mask[0])
 
-            for (r,c), lbl in self.cart_to_lbl.items():
-                if r+maskn < self.n and c+maskm < self.m:
-                    overlap = True
+            for r in range(self.n-maskn+1):
+                for c in range(self.m-maskm+1):
+                    overlap = False
                     thisset = []
 
                     for i in range (maskn):
@@ -121,84 +124,59 @@ class PentominoReduction:
                             if mask[i][j] == 0:
                                 continue
                             elif mask[i][j] == 1 and self.puzzle[i+r][j+c] == 0:
-                                overlap = False
+                                overlap = True
                                 break
                             else:
-                                set.append(self.cart_to_lbl[(i+r, j+c)])
-                        if not overlap:
-                            thisset = []
+                                thisset.append(self.cart_to_lbl[(i+r, j+c)])
+                        if overlap:
                             break
                     
-                    sets.append(thisset)
+                    if not overlap:
+                        sets.append(thisset)
+                        # print(thisset)
+        # print(sets)
         return sets
 
 
-
     def gen_sets(self):
-        for id in range(len(self.cart_to_lbl)):
-            self.collection.append()
+        ctr = 0
+        for id in range(len(self.pieces)):
+            templ = self.gen_sets_for_piece(id)
+            for _ in range(self.pieces[id]):
+                chunk = list(map(lambda x : x+[self.setcoverrowlen + ctr], templ))
+                
+                self.collection += chunk 
+                ctr += 1
 
-
-    def trim_sets(self):
-        # set those that are invalid (meaning they have a 1 in the same column that a fixed
-        # number has a 1) to be empty
-        # this means to cover the entry in those spots, they must use the fixed number
-        bad_indices = set()
-        for row in range(self.n):
-            for col in range(self.n):
-                if self.puzzle[row][col] is None:
-                    continue
-                # set every set that shares a 1 in any column with this one to be empty
-                # deal with first set, so zero out every other row corresponding to a number in this cell
-                # means every block with the same row col values
-                bad_indices.update(set(map(lambda v: self.to_index(row, col, v), range(self.n))))
-                # second set, same value and same row
-                bad_indices.update(set(map(lambda c: self.to_index(row, c, self.puzzle[row][col]), range(self.n))))
-                # third set, same value and same column
-                bad_indices.update(set(map(lambda r: self.to_index(r, col, self.puzzle[row][col]), range(self.n))))
-                # last set, same block
-                bad_indices.update(set(map(lambda x: self.to_index((row // self.b) * self.b + x % self.b, (col // self.b) * self.b + x // self.b, self.puzzle[row][col]), range(self.n))))
-                # add back the correct set itself
-                bad_indices.remove(row * self.n ** 2 + col * self.n + self.puzzle[row][col])
-        # print(bad_indices)
-        # now set all bad_indices to be empty lists
-        for i in bad_indices:
-            self.collection[i] = [0 for _ in range(4 * self.n ** 2)]
-
-    def to_index(self, row, col, val):
-        return int(row * self.n ** 2 + col * self.n + val)
-
-    def to_exact_cover(self):
-        def bin_to_numeric(ls):
-            return [i for i, b in enumerate(ls) if b]
-        subsets = list(map(bin_to_numeric, self.collection))
-        return ExactCoverProblem(4 * self.n ** 2, *subsets)
 
     def to_exact_cover_sets(self):
-        def bin_to_numeric(ls):
-            return [i for i, b in enumerate(ls) if b]
-        subsets = list(map(bin_to_numeric, self.collection))
-        return subsets
+        return self.collection, self.setcoverrowlen + self.piece_count
 
-    def __str__(self):
-        ml = len(str(self.n))*3+6
-        offset = self.n**2
+    def dump(self):
+        grid = []
+        for r, row in enumerate(self.puzzle):
+            out = ""
+            for c, cell in enumerate(row):
+                if cell == 0:
+                    out += '#'
+                else:
+                    out += '.'
+            grid.append(out)
+        
+        # print ('\n'.join(grid))
 
-        def str_coords(r, c, v):
-            coords = f"({r}, {c}, {v})"
-            return coords.rjust(ml, " ")
+        for s in self.collection:
+            newgrid = []
+            coords = [self.lbl_to_cart[s[i]] for i in range(5)]
+            for r in range(self.n):
+                out = ""
+                for c in range(self.m): 
+                    if len(coords) > 0 and coords[0] == (r,c):
+                        out += '#'
+                        coords.pop(0)
+                    else:
+                        out += grid[r][c]
+                newgrid.append(out)
 
-        def clean(num):
-            if num == 1:
-                return "1"
-            else:
-                return " "
-
-        def str_constraints(r, c, v):
-            rownum = self.n**2*r + self.n*c + v
-            row = '|' + '|'.join([' '.join(map(clean, [(self.collection)[rownum][i+k*offset] for i in range(self.n**2)])) for k in range(4)]) + '|' 
-            return row
-
-        header = str_coords("r", "c", "v") + "|" + "cell".ljust(2*offset-1, " ") + "|" + "row".ljust(
-            2*offset-1, " ") + "|" + "col".ljust(2*offset-1, " ") + "|" + "block".ljust(2*offset-1, " ") + "|\n"
-        return header+"\n".join([str_coords(r, c, v)+str_constraints(r, c, v) for r, c, v in itertools.product(range(self.n), range(self.n), range(self.n))])
+            print('\n'.join(newgrid))
+            print()

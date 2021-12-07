@@ -44,14 +44,25 @@ def pentomino(input):
     #       '#' denotes that the cell is blocked
     def mapchar(c):
         return 1 if c == '.' else 0
+
     with open(f"input_puzzles/{input}") as infile:
         n = int(infile.readline())
         pieces = list(map(int, infile.readline().split(" ")))
         puzzle = [list(map(mapchar, infile.readline().strip('\n'))) for _ in range(n)]
         reduction = PentominoReduction(puzzle, pieces)
-
-        ok = PentominoBitmasks()
+        sets, elems_to_cover = reduction.to_exact_cover_sets()
+        ok = PentominoBitmasks()   
+        print(len(ok.bitmask_list))
         # reduction.print_cell_map()
+
+        with open (f"output_puzzles/sets_{input}", 'w') as outfile:
+            outfile.write(f"{elems_to_cover}\n{len(sets)}\n")
+            for set in sets:
+                outfile.write(f'{" ".join(map(str, set))}\n')
+
+        reduction.dump()
+
+        
 
     
 
