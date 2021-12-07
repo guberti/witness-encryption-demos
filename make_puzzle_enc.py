@@ -17,7 +17,7 @@ def sudoku(input):
         if c == '.':
             return None
         else:
-            return int(c)
+            return int(c)-1
     
     with open(f"input_puzzles/{input}") as infile:
         n = int(infile.readline())

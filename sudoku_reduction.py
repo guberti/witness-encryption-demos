@@ -1,5 +1,6 @@
 import itertools
 import math
+from typing import Collection
 from util import ExactCoverProblem
 
 
