@@ -2,6 +2,7 @@ from mmap_classes import MMap, Group, Element
 from Crypto.Util import number
 from sudoku_encryption import SudokuEncryption
 from sudoku_reduction import SudokuReduction
+from pentomino_reduction import PentominoReduction, PentominoBitmasks
 from util import SIMPLE_EC_PROBLEM, SIMPLE_EC_PROBLEM_SOL
 import encrypt
 
@@ -41,7 +42,18 @@ def pentomino(input):
     #   the next n rows consist of n consecutive rows in the set {'.', '#'}. 
     #       '.' denotes that the cell is blank
     #       '#' denotes that the cell is blocked
-    pass
+    def mapchar(c):
+        return 1 if c == '.' else 0
+    with open(f"input_puzzles/{input}") as infile:
+        n = int(infile.readline())
+        pieces = list(map(int, infile.readline().split(" ")))
+        puzzle = [list(map(mapchar, infile.readline().strip('\n'))) for _ in range(n)]
+        reduction = PentominoReduction(puzzle, pieces)
+
+        ok = PentominoBitmasks()
+        # reduction.print_cell_map()
+
+    
 
 
 
@@ -55,6 +67,8 @@ def main():
     
     if puzzle_class == 'sudoku':
         sudoku(filename) 
+    elif puzzle_class == 'pento':
+        pentomino(filename)
 
 
 
