@@ -40,11 +40,11 @@ For the unsolvable sudoku puzzle:
 Address: 1MndAbkcPnyYksL3VNJtoNt54vxta4Rpns
 
 For `sudoku1`:
-----Small Prize Wallet 1 with 2,700 Satoshi----
+----Small Prize Wallet 2 with 2,700 Satoshi----
 Address: 15H79JoED7tZTjmLTojRbiydWEDVMsKxaG
 
 For `sudoku2`:
-----Small Prize Wallet 2 with 2,700 Satoshi----
+----Small Prize Wallet 3 with 2,700 Satoshi----
 Address: 1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3
 
 # Converting from Sudoku puzzle to an actual solution
@@ -61,7 +61,16 @@ The 4x4 sudoku is unsolvable, but we provide the set representations in `unsolva
 
 Bitcoin private keys are generated from 256 bits of randomness. This is done by computing the `sha256` hash twice and then encoding in `base58`. Instructions for doing this can be found online.
 
-For the two large Sudokus with small prizes, 192/256 of the bits are given in the secret key. This is done to speed up encryption and decryption. The other 64 must be obtained through the below mechanism. 
+For the two large Sudokus with small prizes, 192/256 of the bits of the secret key are given. 
+
+the LAST 192 bits of the keys corresponding to prizes 2 and 3 are as follows:
+Prize 2:
+011001001010101101101110001010010000010101100010000101001111100010010010000000010111001111001101010010101001011010011010001101101101010100101110001110011001010100001100011010011001111110100010
+
+Prize 3:
+110100001110101110101000010010010000100001100100110111001110010101100100011001101000000111111010100111111100000001011111011101111111111101001000100100011011011001111110100010101110000000111111
+
+This is done to speed up encryption and decryption. The other 64 must be obtained through the below mechanism. 
 
 For the unsolvable 4by4 sudoku, all 256 of the bits are encrypted. 
 
