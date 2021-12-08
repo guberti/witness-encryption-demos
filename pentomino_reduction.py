@@ -108,8 +108,6 @@ class PentominoReduction:
 
     def gen_sets_for_piece(self, pc_id):
         sets = []
-        # print(f"piece {pc_id}")
-        # print(self.tile_bitmasks[pc_id])
         for mask in self.tile_bitmasks[pc_id]:
             maskn = len(mask)
             maskm = len(mask[0])
@@ -133,8 +131,6 @@ class PentominoReduction:
                     
                     if not overlap:
                         sets.append(thisset)
-                        # print(thisset)
-        # print(sets)
         return sets
 
 
