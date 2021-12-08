@@ -42,6 +42,14 @@ The unsolvable Sudoku corresponds to the following puzzle:
 1...
 ```
 
+# Encryption Statistics
+
+All encryptions were done on a Dell Precision 7540 Mobile Workstation with 72 GB of RAM and an Intel Core i9-9880H CPU @ 2.30GHz. 
+
+- `sudoku1` was encrypted with security parameter `lambda = 20` and multi-linearity `kappa=729`. Its exact cover reduction has 248 sets. It took ~40 minutes to encrypt and has a ciphertext size of 934 MB.
+- `sudoku2` was encrypted with security parameter `lambda = 30` and multi-linearity `kappa=729`. Its exact cover reduction has 206 sets. It took ~3 hours to encrypt and has a ciphtertext size of 4.1 GB.
+- `unsolvable` was encrypted with security parameter `lambda = 60` and multi-linearit `kappa=32`. Its exact cover reduction has 32 sets. It took ~4 hours to encrypt and has a ciphertext size of 10.6 GB.
+
 # Prize Public Keys
 
 For `sudoku1`:
