@@ -1,4 +1,13 @@
-# witness-encryption-demos
+# Building Usable Witness Encryption
+
+Witness encryption using multilinear maps was first proposed in 2013, and has continued to evolve since. In this paper, we build on an open-source multilinear map implementation by Carmer and Malozemoff of the graded encoding scheme CLT13 with asymmetric modifications. Using this map, we created the world's first ciphertext encoded with a candidate witness encryption scheme. Finally, using a reduction from Sudoku to Exact Cover, we encrypted the private key to a Bitcoin wallet with 22,700 Satoshi using a Sudoku. 
+
+<p align="center">
+  <a href="https://drive.google.com/file/d/1uCNsq9n3NagzLuiXKy-XNn-6fEFNxc2t/view?usp=sharing">Read the paper</a>
+</p>
+
+
+# What Is This Repository?
 
 To prove that witness encryptions can be done on real puzzles with reasonable security assumptions, we provide three below (along with the code used to generate them in this repository). Each puzzle is a Sudoku, which has been reduced to an equivalent `Exact-Cover` problem. The Sudokus are given in human-readable form below - their reductions are given in the `puzzles/` directory. The underlying CLT13 Multilinear Map implentation was written by [5GenCrypto](https://github.com/5GenCrypto/clt13).
 
