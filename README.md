@@ -49,17 +49,21 @@ Address: 1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3
 
 # Converting from Sudoku puzzle to an actual solution
 
+The following mentioned files are located in the `sudoku_sets` director.
+
 For a number in a grid in a Sudoku puzzle solution, we require the row it is in, the column it is in (all counting from the upper left), and the value in the cell. 
 
-For a given cell of the form `(row, col, val)`, where row, col, and val are all zero-indexed, you can find the corresponding set representation in the `row * n ** 2 + col * n + val + 1` row of `sudoku_convert.txt`. The number of the encoding of that set is then `row - 1`, where `row` is the row in which that set is now found.
+For a given cell of the form `(row, col, val)`, where row, col, and val are all zero-indexed, you can find the corresponding set representation in line `row * n ** 2 + col * n + val + 1` (1-indexed lines) of `sudoku_convert.txt`. The number of the encoding of that set is then `row - 1`, where `row` is the row in which that set is now found in the respective `sudoku{n}.txt` file.
 
-You can then find out the specific indices of sets required in `sudoku{n}.txt`. The 4x4 sudoku is unsolvable, but we provide the set representations in `unsolvable_sudoku.txt`.
+The 4x4 sudoku is unsolvable, but we provide the set representations in `unsolvable_sudoku.txt`.
 
 # Format of Encryptions
 
 Bitcoin private keys are generated from 256 bits of randomness. This is done by computing the `sha256` hash twice and then encoding in `base58`. Instructions for doing this can be found online.
 
-For the two large Sudokus with small prizes, 192/256 of the bits are given in the secret key. This is done to speed up encryption and decryption. The other 64 must be obtained through the below mechanism.
+For the two large Sudokus with small prizes, 192/256 of the bits are given in the secret key. This is done to speed up encryption and decryption. The other 64 must be obtained through the below mechanism. 
+
+For the unsolvable 4by4 sudoku, all 256 of the bits are encrypted. 
 
 Each puzzle encryption is a `.tar.xz` archive. This contains inside it a public key `pp_l=60.enc` with the standard implemention. 
 
