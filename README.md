@@ -1,14 +1,14 @@
 # witness-encryption-demos
 
-Puzzle 1 encrypts an unsolvable sudoku puzzle of the following form:
-```
-..13
-....
-3...
-1...
-```
+To prove that witness encryptions can be done on real puzzles with reasonable security assumptions, we provide three below (along with the code used to generate them in this repository). Each puzzle is a Sudoku, which has been reduced to an equivalent `Exact-Cover` problem. The Sudokus are given in human-readable form below - their reductions are given in the `puzzles/` directory. The underlying CLT13 Multilinear Map implentation was written by [5GenCrypto](https://github.com/5GenCrypto/clt13).
 
-Puzzle 2 encodes the following 9x9 sudoku puzzle:
+Each puzzle encrypts 256 bits of randomness that were used to generate a Bitcoin wallet. We have transferred 2270 Satoshi (approximately $1.10 at writing) into the wallets that are encrypted by the large Sudokus - puzzles 2 and 3. These Sudokus can be solved by hand or with a computerized solver, and are given only as proof of the validity and scalability of our scheme.
+
+We also created a `4x4` Sudoku which has no satisfying solutuion. We used this Sudoku to encrypt a wallet containing 22,700 Satoshi (approximately $11 at writing), as the only way this money can be retrieved is through defeating our scheme.
+
+# The Puzzles
+
+Sudoku 1 encodes the following 9x9 sudoku puzzle:
 ```
 .1.......
 .....19.5
@@ -21,7 +21,8 @@ Puzzle 2 encodes the following 9x9 sudoku puzzle:
 .......5.
 ```
 
-Puzzle 3 does likewise for the following puzzle:
+Sudoku 2 does likewise for the following puzzle:
+```
 ..48....1
 .2..4..3.
 6....37..
@@ -31,21 +32,37 @@ Puzzle 3 does likewise for the following puzzle:
 ..31....6
 .5..9..4.
 4....78..
+```
 
-# Prizes
-The prizes are as follows.
+The unsolvable Sudoku corresponds to the following puzzle:
+```
+..13
+....
+3...
+1...
+```
+
+# Encryption Statistics
+
+All encryptions were done on a Dell Precision 7540 Mobile Workstation with 72 GB of RAM and an Intel Core i9-9880H CPU @ 2.30GHz. 
+
+- `sudoku1` was encrypted with security parameter `lambda = 20` and multi-linearity `kappa=729`. Its exact cover reduction has 248 sets. It took ~40 minutes to encrypt and has a ciphertext size of 934 MB.
+- `sudoku2` was encrypted with security parameter `lambda = 30` and multi-linearity `kappa=729`. Its exact cover reduction has 206 sets. It took ~3 hours to encrypt and has a ciphtertext size of 4.1 GB.
+- `unsolvable` was encrypted with security parameter `lambda = 60` and multi-linearit `kappa=32`. Its exact cover reduction has 32 sets. It took ~4 hours to encrypt and has a ciphertext size of 10.6 GB.
+
+# Prize Public Keys
+
+For `sudoku1`:
+----Small Prize Wallet 1 with 2,700 Satoshi----
+Address: **15H79JoED7tZTjmLTojRbiydWEDVMsKxaG**
+
+For `sudoku2`:
+----Small Prize Wallet 2 with 2,700 Satoshi----
+Address: **1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3**
 
 For the unsolvable sudoku puzzle:
 ----"Big" Prize Wallet with 22,700 Satoshi ($11 USD)----
-Address: 1MndAbkcPnyYksL3VNJtoNt54vxta4Rpns
-
-For `sudoku1`:
-----Small Prize Wallet 2 with 2,700 Satoshi----
-Address: 15H79JoED7tZTjmLTojRbiydWEDVMsKxaG
-
-For `sudoku2`:
-----Small Prize Wallet 3 with 2,700 Satoshi----
-Address: 1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3
+Address: **1MndAbkcPnyYksL3VNJtoNt54vxta4Rpns**
 
 # Converting from Sudoku puzzle to an actual solution
 
@@ -57,27 +74,55 @@ For a given cell of the form `(row, col, val)`, where row, col, and val are all 
 
 The 4x4 sudoku is unsolvable, but we provide the set representations in `unsolvable_sudoku.txt`.
 
-# Format of Encryptions
+# Downloading and Decoding the Encryptions
 
-Bitcoin private keys are generated from 256 bits of randomness. This is done by computing the `sha256` hash twice and then encoding in `base58`. Instructions for doing this can be found online.
+Because of file size limits on GitHub, we've uploaded the puzzle encryptions to Google Drive. They may be accessed via this link:
 
-For the two large Sudokus with small prizes, 192/256 of the bits of the secret key are given. 
+[https://drive.google.com/drive/folders/1-pnitOx51YKRgZ_uDzMWnV4RouNcjwg-?usp=sharing](https://drive.google.com/drive/folders/1-pnitOx51YKRgZ_uDzMWnV4RouNcjwg-?usp=sharing)
 
-the LAST 192 bits of the keys corresponding to prizes 2 and 3 are as follows:
-Prize 2:
-011001001010101101101110001010010000010101100010000101001111100010010010000000010111001111001101010010101001011010011010001101101101010100101110001110011001010100001100011010011001111110100010
+This folder contains the subset reductions of the above Sudoku problems, as well as `.tgz` archives that are the actual encryptions. Each `.tgz` file has the following structure:
 
-Prize 3:
-110100001110101110101000010010010000100001100100110111001110010101100100011001101000000111111010100111111100000001011111011101111111111101001000100100011011011001111110100010101110000000111111
+```
+sudoku1
+├───pp_l=x.enc
+├───message_bit_0
+│   ├───message_bit.enc
+│   ├───set_0.enc
+│   ├───set_1.enc
+│   ...
+│   └───set_n.enc
+├───message_bit_1
+│   ├───message_bit.enc
+│   ├───set_0.enc
+│   ├───set_1.enc
+│   ...
+│   └───set_n.enc
+...
+```
 
-This is done to speed up encryption and decryption. The other 64 must be obtained through the below mechanism. 
+For each puzzle, the public key is shared between all bit encryptions. Once an exact cover has been calculated (say, for example, with sets `l, m, n, p`), we can decrypt the bits. To decrypt bit `k`, use the sets from the folder `message_bit_k`. Compute:
 
-For the unsolvable 4by4 sudoku, all 256 of the bits are encrypted. 
+```
+is_zero(set_l * set_m * set_n * set_p - message_bit)
+```
 
-Each puzzle encryption is a `.tar.xz` archive. This contains inside it a public key `pp_l=60.enc` with the standard implemention. 
+The boolean returned by `is_zero` is our bit `k`. Repeating this process for all 256 bits will yield the randomness used to generate our Bitcoin private keys.
 
-Using the CLT13 implementation here, a copy of which is located in this repository, multiply together the encodings of the correct sets, subtract it from the `message_bit`, and zero-test it. If it is zero, the bit is a 1. Otherwise, it is a 0. 
+# Accessing the Prizes
 
-We have a sample calculation done in `test_clt_witness_schemes.c` for reference.
+Bitcoin private keys are generated from 256 bits of randomness. This is done by computing the `sha256` hash twice and then encoding in `base58`. The below Python snippet turns a `bytes` object with 256 bits into a private key:
 
-This test can be run using `ctest -R "test_clt_witness_scheme" -VV`. To actually perform the encryptions, we ran `ctest -R "compute_clt_witness" -VV`.
+```python
+def get_private_key(input_bytes):
+    padded = b"\x80" + input_bytes
+    hashed = sha256(sha256(padded))
+    return b58(padded + hashed[:4])
+```
+
+The 256 bits we used to generate the private keys for each wallet have been encrypted. Once they have been retreived as described above, this mechanism should be used to convert them to a private key that can be used to transfer the funds elsewhere. Further details may be found on [https://strm.sh/post/bitcoin-address-generation/](https://strm.sh/post/bitcoin-address-generation/).
+
+# Decryption Code Snippet
+
+We provide a unit test that performs both encryption and decryption in `test_clt_witness_schemes.c`. The test can be run using `ctest -R "test_clt_witness_scheme"`.
+
+The code we used to generate these encryptions may be found in `test/compute_clt_witness.c`.
