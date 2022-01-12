@@ -63,17 +63,11 @@ All encryptions were done on a Dell Precision 7540 Mobile Workstation with 72 GB
 
 To check if the prizes have been claimed, [Blockchain Explorer](https://www.blockchain.com/explorer) can be used (see below links).
 
-For `sudoku1`:
-----Small Prize Wallet 1 with 2,700 Satoshi----
-Address: **[15H79JoED7tZTjmLTojRbiydWEDVMsKxaG](https://www.blockchain.com/btc/address/15H79JoED7tZTjmLTojRbiydWEDVMsKxaG)**
+For `sudoku1`: **[15H79JoED7tZTjmLTojRbiydWEDVMsKxaG](https://www.blockchain.com/btc/address/15H79JoED7tZTjmLTojRbiydWEDVMsKxaG)** (2270 Satoshi)
 
-For `sudoku2`:
-----Small Prize Wallet 2 with 2,700 Satoshi----
-Address: **[1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3](https://www.blockchain.com/btc/address/1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3)**
+For `sudoku2`: **[1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3](https://www.blockchain.com/btc/address/1LVf6GeNx4DBhMXjy7sUj5bK1jBrRWtmz3)** (2270 Satoshi)
 
-For the unsolvable sudoku puzzle:
-----"Big" Prize Wallet with 22,700 Satoshi ($11 USD)----
-Address: **[1MndAbkcPnyYksL3VNJtoNt54vxta4Rpns](https://www.blockchain.com/btc/address/1MndAbkcPnyYksL3VNJtoNt54vxta4Rpns)**
+For the unsolvable puzzle: **[1MndAbkcPnyYksL3VNJtoNt54vxta4Rpns](https://www.blockchain.com/btc/address/1MndAbkcPnyYksL3VNJtoNt54vxta4Rpns)** (22,700 Satoshi)
 
 # Converting from Sudoku puzzle to an actual solution
 
